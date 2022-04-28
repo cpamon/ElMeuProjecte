@@ -1,3 +1,11 @@
+from asyncio.windows_events import NULL
+from django.shortcuts import render, redirect
+from django.http import HttpResponse,HttpResponseRedirect
+from .models import RefMapaWMS, Aplicacio, Pokemon, RefMapaCapa, RefCapa, RefMapa
+from .forms import EntraUrlWMS, CatalegForm, PokemonForm, RefMapaVectorForm, RefMapaWMSForm, RefMapaWMTSForm
+from django.contrib.auth.decorators import login_required
+from django.views.generic import CreateView
+from django.urls import reverse
 
 from django.contrib import auth
 from owslib.wms import WebMapService
