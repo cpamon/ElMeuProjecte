@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+      {% block title %}<title>qVista</title>{% endblock %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="favicon.ico">
+
+        <!-- Add additional CSS in static file -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.css"/>
+        <script type="text/javascript" id="gobcn_inlcude_jsapi" src="https://w33.bcn.cat/geoBCN/js/api/1.0-compact/ca"></script>
+
+        {% load static %}
+        {# Cargamos la librería #}
+        {% load bootstrap4 %}
+
+        {# CSS Bootstrap #}
+        {% bootstrap_css %}
+        
+        {# linea de sota comentada #}
+        {#% load auth_extras %#}
+    </head>
+
+    <body>   
+
+        {# JS y jQuery Bootstrap #}       
+        {% bootstrap_javascript jquery='full' %}
+        {% include "QVCataleg/qVNavBar.html" %}
+        <div class="container-fluid">
+            {% block content %}{% endblock %}
+            {% include "QVCataleg/qVStatusBar.html" %}
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,125 @@
+{% extends "baseQVW.html" %}
+
+{% block content %}
+
+  <section class="py-5 text-center container">
+    <div class="row py-lg-0">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">Catàleg de mapes </h1>
+        <p class="lead text-muted">Anem creant entre tots un catàleg de mapes i capes per reaprofitar.</p>
+        <p>
+          {% comment %} <input type="text" class="form-control mr-sm-2" placeholder="Cerca el mapa que vols"> {% endcomment %}
+          <form action="" method="post">
+          {% csrf_token %}
+          {{ form }}
+          <input type="submit" value="Cerca" name='formOne' id='nomCercat2'>
+          </form>
+        </p>
+        <p>
+          <div class="dropdown">
+            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Nou Mapa
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="/nouMapa/wms">wms</a>
+              <a class="dropdown-item" href="/nouMapa/wmts">wmts</a>
+              <a class="dropdown-item" href="/nouMapa/vector">vector</a>
+            </div>
+          </div>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="album py-0 bg-light">
+    <div class="container">
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        
+         
+         {% for mapa in llistaMapes %}
+          <div class="card shadow-sm">
+            {% comment %} <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg> {% endcomment %}
+            <img src="/media/{{mapa.foto}}" height="300" alt="bcn" class="img-thumbnail">
+            <div class="card-body">
+              <h1 class="card-title">{{mapa.nom}}</h1>
+              <p class="card-text">{{mapa.descripcio}}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <a href="http://localhost:8000/mostraMapa/{{mapa.id}}/0" class="btn btn-sm btn-outline-secondary">Obre</a>
+                  <a href="http://localhost:8000/editaMapa/{{mapa.id}}" class="btn btn-sm btn-outline-secondary">Edita</a>
+                  <a href="http://localhost:8000/esborraMapa/{{mapa.id}}" class="btn btn-sm btn-outline-secondary" onClick="return confirm('Estas segur que vols esborrar aquest mapa?')">Esborra</a>
+                </div>
+                {% comment %} {% if mapa.updated_at == mapa.created_at %} {% endcomment %}
+                <small class="text-muted">Creat el {{mapa.created_at}}</small>
+                {% comment %} {% else %}
+                <small class="text-muted">Editat el {{mapa.updated_at}}</small>
+                {% endif %} {% endcomment %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="py-5 text-center container">
+    <div class="row py-lg-0">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">Catàleg de mapes compostos </h1>
+        <p class="lead text-muted">Anem creant entre tots un catàleg de mapes i capes per reaprofitar.</p>
+        <p>
+          {% comment %} <input type="text" class="form-control mr-sm-2" placeholder="Cerca el mapa que vols"> {% endcomment %}
+          <form action="" method="post">
+          {% csrf_token %}
+          {{ form }}
+          <input type="submit" value="Cerca" name='formTwo' id='nomCercat1'>
+          </form>
+        </p>
+        <a class="btn btn-success" type="button" href='/catalegDinamicCapes'>Nou mapa compost</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="album py-0 bg-light">
+    <div class="container">
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        
+         
+         {% for mapa in llistaMapesCompostos %}
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h1 class="card-title">{{mapa.nomMapa}}</h1>
+              <p class="card-text">{{mapa.metaMapa}}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <a href="http://localhost:8000/mostraMapaCompost/{{mapa.id}}" class="btn btn-sm btn-outline-secondary">Obre</a>
+                  <a href="http://localhost:8000/esborraMapaCompost/{{mapa.id}}" class="btn btn-sm btn-outline-secondary" onClick="return confirm('Estas segur que vols esborrar aquest mapa?')">Esborra</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+<footer class="text-muted py-5">
+  <div class="container">
+    <p class="float-end mb-1">
+      <a href="#">Torna amunt</a>
+    </p>
+    <p class="mb-1">Catàleg provisional (Sistemes d'Informació Territorial)</p>
+
+  </div>
+
+
+</footer>
+
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}

@@ -1,0 +1,209 @@
+{% extends "baseQVW.html" %}
+
+{% block content %} 
+<!-- Estils del document -->
+<style>
+    #map {
+        height: 80vh;
+    } 
+    #dades {
+        height: 80vh;
+    }
+    .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+</style>
+
+<!-- Definició del contenidor que agruparà menús i mapa  -->
+<div class="container-fluid py-4 border width="100%">
+    <div class="row">
+        <!-- Menús -->
+        
+        <!-- <button type="button" onclick="proceed();">do</button>  -->
+        <div class="col-lg-3 overflow-auto" id="dades">
+            <div id="toc">
+                <div id="divCercadors"></div>
+            </div>
+        </div>
+        <!-- Mapa -->
+        <div  class="col-lg-9 map" id="map" ></div>
+  </div>
+</div>
+
+<!-- Script geocomponents -->
+<script type="text/javascript" id="gobcn_include_jsapi" src="https://w33.bcn.cat/geoBCN/js/api/1.0-compact/ca"></script>
+
+<!-- Script principal -->
+<script type="text/javascript" id="codi-presentable">
+
+    var lastAddress;
+    var marcador;
+
+    var capaBarris;
+    var capaDistrictes;
+    var capaCiutat;
+
+    var capaExterna;
+    var capaGeoJson;
+
+    var cercadors;
+
+    /* Generem el mapa */
+    var mapa = new geoBCN.Map({
+        divId: 'map',
+        mode: 'SEL',
+        eines: ['SELPOINT', 'ROTACIO', 'ESCALIMETRE'],
+        {% if mapesBasics %}
+        fons: ['{{ mapaFons }}'],
+        {% else %}
+            fons: ['BAS', 'SAT', 'PLANOLBCN', 'GUIA_PLANOL', 'PLANOLBCN_WEB'],
+        {% endif %}
+        
+        nameSpace: 'territori',
+
+        // Metode de selecció i info del element
+        seleccioFeature: function (feature) {
+            var keys = feature.element.getKeys();
+            var text = '';
+            for (key in keys) {
+                key = keys[key];
+                if (key !== 'geometry') {
+                    text += key + ' : ' + feature.element.get(key) + '\n';
+                }
+            }
+            alert(text);
+        }
+    });
+
+
+
+    function proceed () {
+        var form = document.createElement('form');
+        alert('hola');
+        input = document.createElement('input');
+        form.setAttribute('name', 'title');
+        form.setAttribute('method', 'POST');
+        form.setAttribute('action', '/botonChungo/');
+        form.setAttribute('value', 'pepepepepe');
+        input.name = "csrfmiddlewaretoken";
+        input.type = "hidden";
+        input.value = ('{{ csrf_token }}');
+
+        form.appendChild(input);
+        
+        input = document.createElement('input');
+        input.name = "valor1";
+        input.type = "hidden";
+        input.value = (valor);
+
+        form.appendChild(input);
+        document.body.appendChild(form)
+        form.submit();
+    }
+    mapa.when('ready').then(function () {
+        /* Informació del mapa a a la StatusBar */
+
+        /* CAL UN BUCLE QUE VAGI ITERANT ELS DIFERENTS MAPES COMPOSTOS */
+        {% for capa in llistaCapes %}
+            {% if capa.tipus == 'wms' %}
+                ly_{{ capa.codiCapa }} = mapa.addCartography({
+                    tipus: 'wms',
+                    nom: '{{ capa.nomCapa }}',
+                    params: {
+                        url: '{{ capa.url }}',
+                        capes: '{{ capa.nomCapa }}'
+                    },
+                    visible: false
+                });
+            {% endif %}
+            {% if capa.tipus == 'wmts' %}
+                ly_{{ capa.codiCapa }} = mapa.addCartography({
+                    tipus: 'wmts',
+                    codi: '{{ capa.nomCapa }}',
+                    nom: '{{ capa.nomCapa }}',
+                    params: {
+                        url: '{{ capa.url }}',
+                        capes: '{{ capa.nomCapa }}',
+                        matrixSet: '{{ capa.matrixSet }}',
+                        urlCapabilities: '{{ capa.url }}'
+                    },
+                    visible: false
+                });
+            {% endif %}
+            {% if capa.tipus == 'vector' %}
+                ly_{{ capa.codiCapa }} = mapa.addCartography({
+                tipus: 'vector',
+                codi: '{{ capa.nomCapa }}',
+                nom: '{{ capa.nomCapa }}',
+                params: {
+                    titol: '{{ capa.nomCapa }}',
+                    url: '{{ capa.url }}',
+                    proj: 'EPSG:25831',
+                    source: {
+                        type: 'file',
+                        format: '{{ capa.format }}',
+                        specification: {
+                            geometry: {
+                                type: 'Point',
+                                properties: ['X_ETRS89', 'Y_ETRS89']
+                            },
+                            properties: [],
+                            id: 'CODI'
+                        }
+                    }
+                },
+                visible: true
+            });
+            {% endif %}
+        {% endfor %}
+    });
+
+    /* Menu lateral de cercadors */
+    cercadors = new geoBCN.Html.Cercadors({
+        divId: 'divCercadors',
+        mapa: mapa,
+        cerques: ['ADR', 'CRU', 'ILLA']
+    });
+
+    /* Afegim dos panells més: Informació i Llegenda */
+    cercadors.when('ready').then(function () { 
+
+        {% comment %} var nouPanell = cercadors.afegirPanell({
+            label: 'Informació del mapa',
+            id: 'panelInfoMapa',
+            html: '<p>URL: {{ pUrl }}</p><p>Titol: {{ wms.identification.title }}</p><p>Resum: {{ wms.identification.abstract }}</p><p>{{ wms.provider.name }}</p><p>{{ wms.provider.contact.address }}</p>'
+        }); {% endcomment %}
+
+        var nouPanell2 = cercadors.afegirPanell({
+            label: 'Llegenda',
+            id: 'panelLlegenda',
+                html: '{% for capa in llistaCapes %}<div class="form-check"><input class="form-check-input" type="checkbox" value="" id="ch_{{capa.codiCapa}}"><label class="form-check-label" for="flexCheckDefault">{{capa.nomCapa}}</label></div>{% endfor %}'
+        });
+
+    cercadors.obrePanell('nouPanell2');
+        {% for capa in llistaCapes %}
+            var mch_{{capa.codiCapa}} = document.getElementById('ch_{{capa.codiCapa}}');
+                mch_{{capa.codiCapa}}.addEventListener(
+                    'click', 
+                    function() {
+                        if(mch_{{capa.codiCapa}}.checked) {
+                            ly_{{capa.codiCapa}}.visible(true)} 
+                        else {
+                            ly_{{capa.codiCapa}}.visible(false);}
+                    }
+                );
+        {% endfor %}
+    });
+</script>
+{% endblock %}
+

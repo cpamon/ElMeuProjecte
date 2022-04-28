@@ -1,0 +1,90 @@
+
+
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+    <script type="text/javascript" id="gobcn_inlcude_jsapi" src="https://w33.bcn.cat/geoBCN/js/api/1.0-compact/ca"></script>
+
+    <title>qVista Web</title>
+ 
+  	  {# Cargamos la librería #}
+	  {% load bootstrap4 %}
+ 
+	  {# CSS Bootstrap #}
+	  {% bootstrap_css %}
+{% comment %} {% extends "baseQVW.html" %} {% endcomment %}
+</head>
+<div class="jumbotron text-center">
+  <h1>qVista Web</h1>
+  <p>Entra amb el teu usuari</p>
+  {% block content %}
+
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+{% if next %}
+    {% if user.is_authenticated %}
+    <p>Your account doesn't have access to this page. To proceed,
+    please login with an account that has access.</p>
+    {% else %}
+    <p>Please login to see this page.</p>
+    {% endif %}
+{% endif %}
+
+<div class='d-flex justify-content-center'>
+  <form method="post" class= "form-floating" action="{% url 'login' %}">
+  {% csrf_token %}
+
+  </form>
+  {# Assumes you setup the password_reset view in your URLconf #}
+
+  {% endblock %}
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+    </div>
+    <div class="col-sm-4 px-5 py-5">
+      
+      <div class='container px-3 py-3'>
+        <td>{{ form.username.label_tag }}</td>
+        <td>{{ form.username }}</td>
+      </div>
+      <div class='container px-3 py-3'>
+            <td>{{ form.password.label_tag }}</td>
+            <td>{{ form.password }}</td>
+      </div>
+      <div class='container px-4 py-4'>
+        <input type="submit"  class="form-floating" value="login" />
+        <input type="hidden" name="next" value="{{ next }}" />
+      </div>
+    </div>
+    
+    <div class="col-sm-4 px-5 py-5">
+
+    </div>
+
+    
+ 
+  </div>
+</div>
+<div class='container'>
+ <p><a href="{% url 'password_reset' %}">Has oblidat el password?</a></p>
+
+</div>
+</html>
+{% comment %} ------- {% endcomment %}

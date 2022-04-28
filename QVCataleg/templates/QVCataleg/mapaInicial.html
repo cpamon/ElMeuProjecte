@@ -1,0 +1,25 @@
+{% extends "baseQVW.html" %}
+
+{% block content %}
+<style>
+
+    #map {
+        height: 88vh;
+    }
+</style>
+
+<div  class="container-fluid py-4 border"  width="100%" id="map" ></div>
+
+<script type="text/javascript" id="codi-presentable">    
+
+    var mapa1 = new geoBCN.Map({
+        divId: 'map',
+        capes: '',
+        fons: ['GUIA_PLANOL'],
+        eines: ['ESCALIMETRE'],        
+    });  
+    
+
+</script>
+
+{% endblock %}

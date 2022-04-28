@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>HTML Forms</h2>
+
+    <form action="" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+
+    <ul>
+        <p>Llista de pokemons</p>
+        
+        {{pokemons}}
+        
+    </ul>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+
+
+{#% load user_tags %#}
+<div class="bs-example px-3 py-3" >
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top px-0 py-0">
+        <a class="navbar-brand pl-1" href="/about">
+            <img src="/static/images/QVistaLogo_256.png" class="button" alt="qVistaWeb" style="width:40px;">
+        </a>
+        <a href="http://localhost:8000/" class="navbar-brand">qVista Web</a>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse " id="navbarCollapse">
+            <div class="navbar-nav">
+                {% comment %} <a href="#" class="nav-item nav-link active">Home</a> {% endcomment %}
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    Catàlegs
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/catalegDinamic">Mapes</a>
+                        <a class="dropdown-item" href="/catalegDinamicCapes">Capes</a>
+                        <a class="dropdown-item" href="#">Open Data</a>
+                        <a class="dropdown-item" href="/videos">Videos d'ajuda</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    Serveis
+                    </a>
+                    <div class="dropdown-menu">
+                        
+                        <a class="dropdown-item" href="mostraMapes">Gestió llegenda</a>
+                                            
+                        {% for aplicacio in llistaAplicacions %}
+                                        {% for group in user.groups.all %}
+                                            {% if group.name == aplicacio.grupPermis %}
+                                                <a class="dropdown-item" href="{{aplicacio.laUrl}}">{{aplicacio.nom}}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                
+                        {% endfor %}
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    Altres enllaços
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Planol de Barcelona</a>
+                        <a class="dropdown-item" href="#">PIP</a>
+                        <a class="dropdown-item" href="#">SIU</a>
+                        <a class="dropdown-item" href="#">Carto BCN</a>
+                        <a class="dropdown-item" href="#">GeoPortal</a>
+                    </div>
+                </li>                 
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    Mapes bàsics
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/mostraMapa/0/1">Bàsic</a>
+                        <a class="dropdown-item" href="/mostraMapa/1/1">Satel·lit</a>
+                        <a class="dropdown-item" href="/mostraMapa/2/1">Planol BCN</a>
+                        <a class="dropdown-item" href="/mostraMapa/3/1">Planol de guia</a>
+                        <a class="dropdown-item" href="/mostraMapa/4/1">Planol BCN Web</a>
+                    </div>
+                </li>  
+                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    Altres mapes
+                    </a>
+                    <div class="dropdown-menu">
+                        {% for mapa in llistaMapes%}
+                            <a class="dropdown-item" href="/mostraMapa/{{mapa.id}}/0">{{ mapa.nom}}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+                {% if llistaMapesCompostos %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    Mapes compostos
+                    </a>
+                    <div class="dropdown-menu">
+                        {% for mapa in llistaMapesCompostos%}
+                            <a class="dropdown-item" href="/mostraMapaCompost/{{mapa.id}}">{{ mapa.nomMapa}}</a>
+                        {% endfor %}
+                    </div>
+                </li>  
+                {% endif %}             
+            </div>
+  
+        </div>
+        <div>
+
+                {% if user.is_authenticated %}
+                    <div class="container px-2 py-1">
+                    <a href="http://localhost:8000/usuaris/logout"  class="btn btn-info px-1 py-1" >Tancar sessió</a>
+                        </div>
+                {% else %}
+                <div class="container px-2 py-1">
+                    <a href="http://localhost:8000/usuaris/login"  class="btn btn-info px-1 py-1">Identifica't</a>
+                        </div>
+                {% endif %}
+
+
+                 
+        </div>
+</div>
+
+
+                

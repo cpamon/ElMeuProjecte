@@ -1,0 +1,59 @@
+{% extends "baseQVW.html" %}
+
+{% block content %}
+
+  <section class="py-5 text-center container">
+    <div class="row py-lg-0">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">Catàleg de capes </h1>
+        <p>
+          {% comment %} <input type="text" class="form-control mr-sm-2" placeholder="Cerca el mapa que vols"> {% endcomment %}
+          <form action="" method="post">
+          {% csrf_token %}
+          {{ form }}
+          <input type="submit" value="Cerca" name='formOne'>
+          </form>
+        </p>
+      </div>
+    </div>
+  </section>
+  <div class="album py-0 bg-light">
+    <form action="" method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success" name='formTwo'>Nou mapa compost</button>
+      <input type="text" name='nom'>Nom del mapa compost</input>
+      <input type="text-field" name='metaMapa'>Meta mapa</input>
+      <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+          {% for capa in llistaCapes %}
+          <div class="card shadow-sm">
+              <div class="card-body">
+                <h1 class="card-title">{{capa.nomCapa}}</h1>
+                <div class="mb-3 form-check">
+                  <input type="checkbox" class="form-check-input" value={{capa.id}} name='boxes'>
+                  <label class="form-check-label">Selecciona aquesta capa</label>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+<footer class="text-muted py-5">
+  <div class="container">
+    <p class="float-end mb-1">
+      <a href="#">Torna amunt</a>
+    </p>
+    <p class="mb-1">Catàleg provisional (Sistemes d'Informació Territorial)</p>
+
+  </div>
+
+
+</footer>
+
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}

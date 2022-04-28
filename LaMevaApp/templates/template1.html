@@ -1,0 +1,10 @@
+<html>
+    <body>
+        {% for animal in llistaAnimals %}
+            {{animal.nomAnimal}}<br>
+            {% if animal.nomAnimal == 'gos' %}
+                Aixo es un gos
+            {% endif %}
+        {% endfor %}
+    </body>
+</html>
