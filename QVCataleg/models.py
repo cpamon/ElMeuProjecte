@@ -16,7 +16,7 @@ class Aplicacio(models.Model):
         db_table = "aplicacio"
 
 
-class RefMapaWMS(models.Model):
+""" class RefMapaWMS(models.Model):
     tipus   =   models.CharField(max_length=20)
     nom     =   models.CharField(max_length=100)
     descripcio      = models.TextField(null=True)
@@ -30,7 +30,7 @@ class RefMapaWMS(models.Model):
     mapa_actual = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.nom
+        return self.nom """
 
 class RefCapa(models.Model):
     codiCapa = models.CharField(max_length=100)
