@@ -44,9 +44,18 @@ class RefCapa(models.Model):
         return self.codiCapa
 
 class RefMapa(models.Model):
-    codiMapa = models.CharField(max_length=100)
-    nomMapa = models.CharField(max_length=200)
-    metaMapa = models.CharField(max_length=200, null=True)
+    codiMapa = models.CharField(max_length=100, null=True)
+    nom = models.CharField(max_length=200, null=True)
+    tipus   =   models.CharField(max_length=20, null=True)
+    descripcio      = models.TextField(null=True)
+    pUrl    =   models.CharField(max_length=200, null=True)
+    urlCapabilities    =   models.CharField(max_length=200, default='X', null=True)
+    matrixSet = models.CharField(max_length=30, null=True)
+    format = models.CharField(max_length=20, null=True)
+    foto = models.ImageField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+    mapa_actual = models.BooleanField(default=False)
 
     def __str__(self):
         return self.codiMapa

@@ -1,7 +1,7 @@
 from asyncio.windows_events import NULL
 from django.shortcuts import render, redirect
 from django.http import HttpResponse,HttpResponseRedirect
-from .models import RefMapaWMS, Aplicacio, Pokemon, RefMapaCapa, RefCapa, RefMapa
+from .models import Aplicacio, Pokemon, RefMapaCapa, RefCapa, RefMapa
 from .forms import EntraUrlWMS, CatalegForm, PokemonForm, RefMapaVectorForm, RefMapaWMSForm, RefMapaWMTSForm
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView
@@ -16,13 +16,12 @@ import hashlib
 # Pantalla inicial
 def principal_view(request):
     template = 'QVCataleg/mapaInicial.html'
-    llistaMapes = RefMapaWMS.objects.all()
     llistaMapesCompostos = RefMapa.objects.all()
-    for mapa in llistaMapes:
+    for mapa in llistaMapesCompostos:
         mapa.mapa_actual = False
         mapa.save()
     llistaApps = Aplicacio.objects.all()
-    context = {'llistaAplicacions' : llistaApps, 'llistaMapes' : llistaMapes, 'llistaMapesCompostos' : llistaMapesCompostos}
+    context = {'llistaAplicacions' : llistaApps, 'llistaMapesCompostos' : llistaMapesCompostos}
     return render(request, template, context)
 
 # View per mostrar el mapa
@@ -31,22 +30,21 @@ def mostraMapa(request, mapa, tip):
         mapesBasics = True
     else:
         mapesBasics = False
-    llistaTotalMapes = RefMapaWMS.objects.all()
     llistaMapesCompostos = RefMapa.objects.all()
     llista = Aplicacio.objects.all()
     template = 'QVCataleg/gestioWMS.html'
     if (mapesBasics):
         mapes = ['BAS', 'SAT', 'PLANOLBCN', 'GUIA_PLANOL', 'PLANOLBCN_WEB']
         mapaFons = mapes[mapa]
-        context = {'mapaFons' : mapaFons, 'mapesBasics' : True, 'llistaAplicacions' : llista, 'llistaMapes' : llistaMapes, 'llistaMapesCompostos' : llistaMapesCompostos}
+        context = {'mapaFons' : mapaFons, 'mapesBasics' : True, 'llistaAplicacions' : llista, 'llistaMapesCompostos' : llistaMapesCompostos}
     else:
         llistaCapes = []
         llistaMapes = [[]]
-        mapaFons = RefMapaWMS.objects.get(id=mapa)
+        mapaFons = RefMapa.objects.get(id=mapa)
         mapaFons.mapa_actual = True
         mapaFons.save()
 
-        mapes = RefMapaWMS.objects.filter(mapa_actual=True).order_by('nom')
+        mapes = RefMapa.objects.filter(mapa_actual=True).order_by('nom')
         for mapa in mapes:
             pUrl = mapa.pUrl
             matrixSet = mapa.matrixSet
@@ -67,7 +65,7 @@ def mostraMapa(request, mapa, tip):
 
             llistaMapes.append([wms,tipus,pUrl,matrixSet,format,llistaCapes])
 
-        context = {'llistaMapes2' : llistaMapes, 'mapesBasics' : False, 'llistaAplicacions' : llista, 'llistaMapes' : llistaTotalMapes, 'llistaMapesCompostos' : llistaMapesCompostos}
+        context = {'llistaMapes2' : llistaMapes, 'mapesBasics' : False, 'llistaAplicacions' : llista, 'llistaMapesCompostos' : llistaMapesCompostos}
         #context = {'wms' : wms, 'tipus' : tipus, 'pUrl' : pUrl, 'urlCapabilities' :urlCapabilities, 'matrixSet' : matrixSet, 'format': format, 'llistaCapes' : llistaCapes, 'mapesBasics' : False, 'llistaAplicacions' : llista, 'llistaMapes' : llistaMapes}
 
     return render(request, template, context)
@@ -75,7 +73,6 @@ def mostraMapa(request, mapa, tip):
 def mostraMapaCompost(request, mapa):
 
     template = 'QVCataleg/gestioMapa.html'
-    llistaMapes = RefMapaWMS.objects.all()
     llistaMapesCompostos = RefMapa.objects.all()
     llista = Aplicacio.objects.all()
 
@@ -86,34 +83,32 @@ def mostraMapaCompost(request, mapa):
         capa = RefCapa.objects.get(codiCapa=codi.codiCapa)
         capes.append(capa)
 
-    context = {'mapa': mapaCompost, 'llistaCapes': capes, 'mapesBasics' : False, 'llistaAplicacions' : llista, 'llistaMapes' : llistaMapes, 'llistaMapesCompostos' : llistaMapesCompostos}
+    context = {'mapa': mapaCompost, 'llistaCapes': capes, 'mapesBasics' : False, 'llistaAplicacions' : llista, 'llistaMapesCompostos' : llistaMapesCompostos}
 
     return render(request, template, context)
 
 # Catàleg de mapes
 def catalegDinamic_view(request):
     llistaAplis = Aplicacio.objects.all()
-    refMapes = RefMapaWMS.objects.all()
-    llistaMapesCompostos = RefMapa.objects.all()
+    refMapes = RefMapa.objects.all()
     template = 'QVCataleg/catalegDinamic.html'
     if request.method == 'POST':
         if 'formOne' in request.POST:
             form = CatalegForm(request.POST)
             if form.is_valid():
-                refMapes = RefMapaWMS.objects.filter(nom__contains=form.cleaned_data['nomCercat'])
+                refMapes = RefMapa.objects.filter(nom__contains=form.cleaned_data['nomCercat'])
                 numTrobats = len(refMapes)
         if 'formTwo' in request.POST:
             form = CatalegForm(request.POST)
             if form.is_valid():
-                llistaMapesCompostos = RefMapa.objects.filter(nomMapa__contains=form.cleaned_data['nomCercat'])
+                refMapes = RefMapa.objects.filter(nomMapa__contains=form.cleaned_data['nomCercat'])
     else:
         form = CatalegForm()
     
-    context = {'llistaMapes' : refMapes, 
+    context = {'llistaMapesCompostos' : refMapes, 
                 'numMapes' : len(refMapes),
                 'form' : form,
-                'llistaAplicacions' : llistaAplis,
-                'llistaMapesCompostos': llistaMapesCompostos}
+                'llistaAplicacions' : llistaAplis}
 
     return render(request, template, context)
 
@@ -121,7 +116,6 @@ def catalegDinamic_view(request):
 # Catàleg de capes
 def catalegDinamicCapes_view(request):
     llistaAplis = Aplicacio.objects.all()
-    refMapes = RefMapaWMS.objects.all()
     llistaMapesCompostos = RefMapa.objects.all()
     capes = RefCapa.objects.all()
     template = 'QVCataleg/catalegDinamicCapes.html'
@@ -137,7 +131,7 @@ def catalegDinamicCapes_view(request):
             print(id_list)
             codi = abs(hash(nomMapa)) % (10 ** 5)
             print(codi)
-            mapaCompost = RefMapa(codiMapa=codi, nomMapa=nomMapa, metaMapa=metaMapa)
+            mapaCompost = RefMapa(codiMapa=codi, nom=nomMapa, descripcio=metaMapa)
             mapaCompost.save()
             for x in id_list:
                 capa = RefCapa.objects.get(id=int(x))
@@ -150,8 +144,7 @@ def catalegDinamicCapes_view(request):
     else:
         form = CatalegForm()
 
-    context = {'llistaMapes' : refMapes,
-                'form' : form,
+    context = {'form' : form,
                 'llistaAplicacions' : llistaAplis,
                 'llistaMapesCompostos': llistaMapesCompostos,
                 'llistaCapes': capes}
@@ -187,7 +180,6 @@ def test_view(request):
 
 def mapaForm_view(request, tipus):
     print(tipus)
-    mapes = RefMapaWMS.objects.all()
     llistaMapesCompostos = RefMapa.objects.all()
     template = 'QVCataleg/refMapaWMSForm.html'
     if request.method == 'POST':
@@ -199,7 +191,8 @@ def mapaForm_view(request, tipus):
             form = RefMapaVectorForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            mapa = RefMapaWMS.objects.last()
+            mapa = RefMapa.objects.last()
+            mapa.codiMapa = abs(hash(mapa.nom)) % (10 ** 5)
             mapa.urlCapabilities = mapa.pUrl + '?request=GetCapabilities&service=WMS'
             mapa.save()
             # s'afegeix a les BBDD les capes del mapa que s'acaba de donar d'alta
@@ -209,16 +202,23 @@ def mapaForm_view(request, tipus):
                     codi = normalitzaCapa(content, mapa.id)
                     capa = RefCapa(codiCapa=codi, nomCapa=content, url=mapa.pUrl, tipus=mapa.tipus, matrixSet=mapa.matrixSet)
                     capa.save()
+                    mapaCapa = RefMapaCapa(codiMapa=mapa.codiMapa,codiCapa=codi)
+                    mapaCapa.save()
             elif tipus == 'wmts':
                 wms = WebMapTileService(mapa.pUrl)
                 for content in wms.contents:
                     codi = normalitzaCapa(content, mapa.id)
                     capa = RefCapa(codiCapa=codi, nomCapa=content, url=mapa.pUrl, tipus=mapa.tipus, matrixSet=mapa.matrixSet)
                     capa.save()
+                    mapaCapa = RefMapaCapa(codiMapa=mapa.codiMapa,codiCapa=codi)
+                    mapaCapa.save()
             elif tipus == 'vector':
                 codi = normalitzaCapa(mapa.nom, mapa.id)
                 capa = RefCapa(codiCapa=codi, nomCapa=mapa.nom, url=mapa.pUrl, tipus=mapa.tipus, matrixSet=mapa.matrixSet, format=mapa.format)
                 capa.save()
+                mapaCapa = RefMapaCapa(codiMapa=mapa.codiMapa,codiCapa=codi)
+                mapaCapa.save()
+            
             return redirect(catalegDinamic_view)
 
     else:
@@ -232,7 +232,6 @@ def mapaForm_view(request, tipus):
     edita = False
     context = {
                 'form' : form,
-                'llistaMapes' : mapes,
                 'edita': edita,
                 'tipus': tipus,
                 'llistaMapesCompostos': llistaMapesCompostos}
@@ -242,10 +241,9 @@ def mapaForm_view(request, tipus):
 
     
 def editaMapaForm_view(request, mapa):
-    mapes = RefMapaWMS.objects.all()
     llistaMapesCompostos = RefMapa.objects.all()
     template = 'QVCataleg/refMapaWMSForm.html'
-    m = RefMapaWMS.objects.get(pk=int(mapa))
+    m = RefMapa.objects.get(pk=int(mapa))
     if request.method == 'POST':
         if m.tipus == 'wms':
             form = RefMapaWMSForm(request.POST, request.FILES, instance=m)
@@ -270,7 +268,6 @@ def editaMapaForm_view(request, mapa):
     edita = True
     context = {
                 'form' : form,
-                'llistaMapes' : mapes,
                 'edita': edita,
                 'tipus': m.tipus,
                 'llistaMapesCompostos': llistaMapesCompostos}
@@ -278,35 +275,14 @@ def editaMapaForm_view(request, mapa):
 
     return render(request, template, context)
 
-def esborraMapaForm_view(request, mapa):
-    mapa = RefMapaWMS.objects.get(pk=int(mapa))
-    if mapa.tipus == 'wms':
-        wms = WebMapService(mapa.pUrl, version='1.1.1')
-        for content in wms.contents:
-            codi = normalitzaCapa(content, mapa.id)
-            capa = RefCapa.objects.get(codiCapa=codi)
-            capa.delete()
-    elif mapa.tipus == 'wmts':
-        wms = WebMapTileService(mapa.pUrl)
-        for content in wms.contents:
-            codi = normalitzaCapa(content, mapa.id)
-            capa = RefCapa.objects.get(codiCapa=codi)
-            capa.delete()
-    elif mapa.tipus == 'vector':
-        codi = normalitzaCapa(mapa.nom, mapa.id)
-        capa = RefCapa.objects.get(codiCapa=codi)
-        capa.delete()
-    if mapa.foto:
-        mapa.foto.delete()
-    mapa.delete()
-    return redirect(catalegDinamic_view)
-
 def esborraMapaCompostForm_view(request, mapa):
     mapa = RefMapa.objects.get(pk=int(mapa))
     capes = RefMapaCapa.objects.filter(codiMapa=mapa.codiMapa)
     for capa in capes:
         print(capa.codiCapa)
         capa.delete()
+    if mapa.foto:
+        mapa.foto.delete()
     mapa.delete()
     return redirect(catalegDinamic_view)
 

@@ -1,5 +1,5 @@
 from django import forms
-from .models import RefMapaWMS
+from .models import RefMapa
 
 class EntraUrlWMS(forms.Form):
     urlWMS = forms.CharField(label='Url del WMS:', max_length=300)
@@ -15,12 +15,14 @@ class PokemonForm(forms.Form):
 
 class RefMapaWMSForm(forms.ModelForm):
     class Meta:
-        model = RefMapaWMS
+        model = RefMapa
         fields = ['tipus', 'nom', 'descripcio', 'pUrl', 'urlCapabilities', 'foto']
 
     def __init__(self, *args, **kwargs):
         super(RefMapaWMSForm, self).__init__(*args, **kwargs)
         self.fields['descripcio'].required = False
+        self.fields['foto'].required = False
+        self.fields['tipus'].widget.attrs['readonly'] = True
         self.fields['urlCapabilities'].widget.attrs['readonly'] = True
 
         for field in iter(self.fields):
@@ -31,12 +33,13 @@ class RefMapaWMSForm(forms.ModelForm):
 
 class RefMapaWMTSForm(forms.ModelForm):
     class Meta:
-        model = RefMapaWMS
+        model = RefMapa
         fields = ['tipus', 'nom', 'descripcio', 'pUrl', 'urlCapabilities', 'matrixSet', 'foto']
 
     def __init__(self, *args, **kwargs):
         super(RefMapaWMTSForm, self).__init__(*args, **kwargs)
         self.fields['descripcio'].required = False
+        self.fields['tipus'].widget.attrs['readonly'] = True
 
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
@@ -47,13 +50,14 @@ class RefMapaWMTSForm(forms.ModelForm):
 
 class RefMapaVectorForm(forms.ModelForm):
     class Meta:
-        model = RefMapaWMS
+        model = RefMapa
         fields = ['tipus', 'nom', 'descripcio', 'pUrl', 'urlCapabilities', 'matrixSet', 'format', 'foto']
     
     def __init__(self, *args, **kwargs):
         super(RefMapaVectorForm, self).__init__(*args, **kwargs)
         self.fields['format'].required = False
         self.fields['descripcio'].required = False
+        self.fields['tipus'].widget.attrs['readonly'] = True
 
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({

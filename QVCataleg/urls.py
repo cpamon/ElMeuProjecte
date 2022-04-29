@@ -14,7 +14,6 @@ urlpatterns = [
     path('test/', views.test_view, name='test'),
     path('nouMapa/<str:tipus>/', views.mapaForm_view, name='nouMapa'),
     path('editaMapa/<int:mapa>/', views.editaMapaForm_view, name='editaMapa'),
-    path('esborraMapa/<int:mapa>/', views.esborraMapaForm_view, name='esborraMapa'),
     path('esborraMapaCompost/<int:mapa>/', views.esborraMapaCompostForm_view, name='esborraMapaCompost'),
 
 ]
