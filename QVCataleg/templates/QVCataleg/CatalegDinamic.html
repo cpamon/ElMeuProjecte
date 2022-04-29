@@ -48,7 +48,7 @@
                 <div class="btn-group">
                   <a href="http://localhost:8000/mostraMapa/{{mapa.id}}/0" class="btn btn-sm btn-outline-secondary">Obre</a>
                   <a href="http://localhost:8000/editaMapa/{{mapa.id}}" class="btn btn-sm btn-outline-secondary">Edita</a>
-                  <a href="http://localhost:8000/esborraMapa/{{mapa.id}}" class="btn btn-sm btn-outline-secondary" onClick="return confirm('Estas segur que vols esborrar aquest mapa?')">Esborra</a>
+                  <a href="http://localhost:8000/esborraMapaCompost/{{mapa.id}}" class="btn btn-sm btn-outline-secondary" onClick="return confirm('Estas segur que vols esborrar aquest mapa?')">Esborra</a>
                 </div>
                 {% comment %} {% if mapa.updated_at == mapa.created_at %} {% endcomment %}
                 <small class="text-muted">Creat el {{mapa.created_at}}</small>
