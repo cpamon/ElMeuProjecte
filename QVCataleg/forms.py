@@ -23,6 +23,7 @@ class RefMapaWMSForm(forms.ModelForm):
         self.fields['descripcio'].required = False
         self.fields['foto'].required = False
         self.fields['tipus'].widget.attrs['readonly'] = True
+        self.fields['urlCapabilities'].required = False
         self.fields['urlCapabilities'].widget.attrs['readonly'] = True
 
         for field in iter(self.fields):
@@ -39,6 +40,8 @@ class RefMapaWMTSForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RefMapaWMTSForm, self).__init__(*args, **kwargs)
         self.fields['descripcio'].required = False
+        self.fields['urlCapabilities'].required = False
+        self.fields['urlCapabilities'].widget.attrs['readonly'] = True
         self.fields['tipus'].widget.attrs['readonly'] = True
 
         for field in iter(self.fields):
@@ -57,6 +60,8 @@ class RefMapaVectorForm(forms.ModelForm):
         super(RefMapaVectorForm, self).__init__(*args, **kwargs)
         self.fields['format'].required = False
         self.fields['descripcio'].required = False
+        self.fields['urlCapabilities'].required = False
+        self.fields['urlCapabilities'].widget.attrs['readonly'] = True
         self.fields['tipus'].widget.attrs['readonly'] = True
 
         for field in iter(self.fields):
