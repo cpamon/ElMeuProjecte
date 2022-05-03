@@ -33,7 +33,7 @@
                 {{ form.urlCapabilities }}
             </div>
             {% endif %}
-            {% if tipus != 'wms' %}
+            {% if tipus == 'wmts' or tipus == 'vector' %}
             <div class="col-md-6">
                 <label class="form-label">MatrixSet</label>
                 {{ form.matrixSet }}

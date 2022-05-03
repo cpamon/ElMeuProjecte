@@ -13,6 +13,26 @@ class PokemonForm(forms.Form):
     foto = forms.ImageField(label='Foto')
 
 
+class RefMapaForm(forms.ModelForm):
+    class Meta:
+        model = RefMapa
+        fields = ['tipus', 'nom', 'descripcio', 'pUrl', 'urlCapabilities', 'foto']
+
+    def __init__(self, *args, **kwargs):
+        super(RefMapaForm, self).__init__(*args, **kwargs)
+        self.fields['descripcio'].required = False
+        self.fields['foto'].required = False
+        self.fields['tipus'].widget.attrs['readonly'] = True
+        self.fields['urlCapabilities'].required = False
+        self.fields['urlCapabilities'].widget.attrs['readonly'] = True
+
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control',
+                'placeholder': field
+        })
+
+
 class RefMapaWMSForm(forms.ModelForm):
     class Meta:
         model = RefMapa

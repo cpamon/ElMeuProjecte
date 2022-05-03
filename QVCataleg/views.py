@@ -2,7 +2,7 @@ from asyncio.windows_events import NULL
 from django.shortcuts import render, redirect
 from django.http import HttpResponse,HttpResponseRedirect
 from .models import Aplicacio, Pokemon, RefMapaCapa, RefCapa, RefMapa
-from .forms import EntraUrlWMS, CatalegForm, PokemonForm, RefMapaVectorForm, RefMapaWMSForm, RefMapaWMTSForm
+from .forms import EntraUrlWMS, CatalegForm, PokemonForm, RefMapaVectorForm, RefMapaWMSForm, RefMapaWMTSForm, RefMapaForm
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView
 from django.urls import reverse
@@ -131,7 +131,7 @@ def catalegDinamicCapes_view(request):
             print(id_list)
             codi = abs(hash(nomMapa)) % (10 ** 5)
             print(codi)
-            mapaCompost = RefMapa(codiMapa=codi, nom=nomMapa, descripcio=metaMapa)
+            mapaCompost = RefMapa(codiMapa=codi, nom=nomMapa, descripcio=metaMapa, mapa_compost=True)
             mapaCompost.save()
             for x in id_list:
                 capa = RefCapa.objects.get(id=int(x))
@@ -264,12 +264,15 @@ def editaMapaForm_view(request, mapa):
             form = RefMapaWMTSForm(initial={'tipus': m.tipus}, instance=m)
         elif m.tipus == 'vector':
             form = RefMapaVectorForm(initial={'tipus': m.tipus}, instance=m)
+        elif m.mapa_compost:
+            form = RefMapaForm(instance=m)
 
     edita = True
     context = {
                 'form' : form,
                 'edita': edita,
                 'tipus': m.tipus,
+                'mapaCompost': m.mapa_compost,
                 'llistaMapesCompostos': llistaMapesCompostos}
 
 
@@ -277,10 +280,9 @@ def editaMapaForm_view(request, mapa):
 
 def esborraMapaCompostForm_view(request, mapa):
     mapa = RefMapa.objects.get(pk=int(mapa))
-    capes = RefMapaCapa.objects.filter(codiMapa=mapa.codiMapa)
-    for capa in capes:
-        print(capa.codiCapa)
-        capa.delete()
+    relacionsMapaCapa = RefMapaCapa.objects.filter(codiMapa=mapa.codiMapa)
+    for relacio in relacionsMapaCapa:
+        relacio.delete()
     if mapa.foto:
         mapa.foto.delete()
     mapa.delete()

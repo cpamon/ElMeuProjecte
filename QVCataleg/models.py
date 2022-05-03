@@ -56,6 +56,7 @@ class RefMapa(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     mapa_actual = models.BooleanField(default=False)
+    mapa_compost = models.BooleanField(default=False)
 
     def __str__(self):
         return self.codiMapa

@@ -68,17 +68,19 @@
                         <a class="dropdown-item" href="/mostraMapa/4/1">Planol BCN Web</a>
                     </div>
                 </li>  
+                {% if llistaMapesCompostos%}
                  <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                     Altres mapes
                     </a>
                     <div class="dropdown-menu">
                         {% for mapa in llistaMapesCompostos%}
-                            <a class="dropdown-item" href="/mostraMapa/{{mapa.id}}/0">{{ mapa.nom}}</a>
+                            <a class="dropdown-item" href="/mostraMapaCompost/{{mapa.id}}">{{ mapa.nom}}</a>
                         {% endfor %}
                     </div>
                 </li>
-                {% if llistaMapesCompostos %}
+                {% endif %}
+                {% comment %} {% if llistaMapesCompostos %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                     Mapes compostos
@@ -89,7 +91,7 @@
                         {% endfor %}
                     </div>
                 </li>  
-                {% endif %}             
+                {% endif %}   {% endcomment %}           
             </div>
   
         </div>
